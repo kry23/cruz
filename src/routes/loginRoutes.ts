@@ -1,14 +1,11 @@
 import { Router, Request, Response } from "express";
-import {People} from "./People";
+import { People } from "./People";
 
+const amazingRouter = Router();
 
-
-
-const router = Router();
-
-// Typescript kullanma amacımız bunların hepsine type vermek hani bunun interface'i?
-let people: People = 
-  [{
+// Typescript kullanma amacımız bunların hepsine type vermek hani bunun interface'i? // bu tamam
+let people: People = [
+  {
     id: 1,
     name: "koray",
   },
@@ -20,15 +17,14 @@ let people: People =
   {
     id: 3,
     name: "eldar",
-  }]
+  },
+];
 
-
-
-router.get("/login", (req: Request, res: Response) => {
-    // fotmencoded değil json kabul et. 
-    // token üret onu döndür.
-    // sonra bu tokeni Authorization isminde bir header'la kabul edip kullanıcının login olup olmadığını anla
-    /*
+amazingRouter.get("/login", (req: Request, res: Response) => {
+  // fotmencoded değil json kabul et.
+  // token üret onu döndür.
+  // sonra bu tokeni Authorization isminde bir header'la kabul edip kullanıcının login olup olmadığını anla
+  /*
   res.send(`
     <form method="POST">
     <div>
@@ -43,12 +39,12 @@ router.get("/login", (req: Request, res: Response) => {
     </form>
     `);
     */
-     res.json({ error: "Not Implemented" });
+  res.json({ error: "Not Implemented" });
 });
 
-router.post("/login", (req: Request, res: Response) => {
-    // API'ye böyle giriş yapılmaz. JWT kullan.
-    /*
+amazingRouter.post("/login", (req: Request, res: Response) => {
+  // API'ye böyle giriş yapılmaz. JWT kullan.
+  /*
   const { email, password } = req.body;
   if (email && password && email === "hi@hi.com" && password === "password") {
     req.session = { loggedIn: true };
@@ -57,14 +53,14 @@ router.post("/login", (req: Request, res: Response) => {
     res.send("invalid email or password ");
   }
   */
- res.json({ error: "Not Implemented" });
+  res.json({ error: "Not Implemented" });
 });
 
-router.get("/", (req: Request, res: Response) => {
-    // if (req.session && req.session.loggedIn)
-    // Bunu middleware yap
+amazingRouter.get("/", (req: Request, res: Response, next) => {
+  // if (req.session && req.session.loggedIn)
+  // Bunu middleware yap
 
-    /*
+  /*
   if (req.session && req.session.loggedIn) {
     res.send(`
             <div> 
@@ -81,7 +77,7 @@ router.get("/", (req: Request, res: Response) => {
         `);
   }
   */
- res.json({ error: "Not Implemented" })
+  res.json({ error: "Not Implemented" });
 });
 
 // Bunu sil api'de logout olmaz. cookie de kullanılmaz zaten.
@@ -91,7 +87,7 @@ router.get("/logout", (req: Request, res: Response) => {
 });
 */
 
-router.get("/lol", (req: Request, res: Response) => {
+amazingRouter.get("/lol", (req: Request, res: Response) => {
   res.json(people);
 });
 
@@ -100,24 +96,24 @@ router.get("/lol", (req: Request, res: Response) => {
 //     res.send (productName+productDesc);
 //  })
 
-router.get("/lol/:id", (req: Request, res: Response) => {
+amazingRouter.get("/lol/:id", (req: Request, res: Response) => {
   res.json(people.filter((person) => person.id === parseInt(req.params.id)));
 });
 
-router.post("/lol/", (req: Request, res: Response) => {
+amazingRouter.post("/lol/", (req: Request, res: Response) => {
   const newPerson = {
     id: 5,
     name: req.body.name,
   };
-  
+
   people.push(newPerson);
   res.json(people);
 });
 
-router.put("/lol/:id", (req: Request, res: Response) => {
+amazingRouter.put("/lol/:id", (req: Request, res: Response) => {
   const found = people.some((person) => person.id === parseInt(req.params.id));
 
-  // Denemesini yapmadım ama mantığım çalışır diyor. 
+  // Denemesini yapmadım ama mantığım çalışır diyor.
   if (found) {
     people = people.map((p: any) => {
       if (p.id === parseInt(req.params.id)) {
@@ -127,7 +123,9 @@ router.put("/lol/:id", (req: Request, res: Response) => {
     });
   } else {
     // msg değil mesage. Bu bir best practice bak.
-    res.status(400).json({ message: `no person with the id of ${req.params.id}` });
+    res
+      .status(400)
+      .json({ message: `no person with the id of ${req.params.id}` });
   }
 
   /*
@@ -148,7 +146,6 @@ router.put("/lol/:id", (req: Request, res: Response) => {
     */
 });
 
-
-// BEST PRACTICE: birden fazla router'ın olduğunda napcan? hepsine router dersen karışmaz mı?
+// BEST PRACTICE: birden fazla router'ın olduğunda napcan? hepsine router dersen karışmaz mı? --tamam
 // rename...
-export { router };
+export { amazingRouter };

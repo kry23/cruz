@@ -8,16 +8,13 @@
                                                                                                       
 */
 
-
-
-
 import express, { Request, Response } from "express";
 import cookieSession from "cookie-session";
 // Express bu özellikleri içe aldı artık body parser kurmana gerek yok
 // import bodyParser from "body-parser";
 
 // BEST PRACTICE: routes adında bir klasörün varsa içine bir index ata klasördekileri o çıkarsın.
-import { router } from "./routes";
+import { amazingRouter } from "./routes";
 
 const app = express();
 
@@ -26,10 +23,9 @@ app.use(cookieSession({ keys: [""] }));
 // form encoded kullanmıyorsun
 // app.use(bodyParser.urlencoded({ extended: true }));
 
-
 app.use(express.json());
 
-app.use(router);
+app.use(amazingRouter);
 
 app.listen(3001, () => {
   console.log("listening on 3001");
