@@ -1,4 +1,4 @@
-export interface People { 
-  
-    [index:number]: {id: number;name: string;};
-  }
+export interface People {
+  id: number;
+  name: string;
+}

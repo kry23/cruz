@@ -1,10 +1,12 @@
 import { Router, Request, Response } from "express";
 import { People } from "./People";
+import JWT from "jsonwebtoken";
 
 const amazingRouter = Router();
+const accessTokenSecret = "topsecret";
 
 // Typescript kullanma amacımız bunların hepsine type vermek hani bunun interface'i? // bu tamam
-let people: People = [
+let people: People[] = [
   {
     id: 1,
     name: "koray",
@@ -24,22 +26,21 @@ amazingRouter.get("/login", (req: Request, res: Response) => {
   // fotmencoded değil json kabul et.
   // token üret onu döndür.
   // sonra bu tokeni Authorization isminde bir header'la kabul edip kullanıcının login olup olmadığını anla
-  /*
-  res.send(`
-    <form method="POST">
-    <div>
-        <label>Email</label>
-        <input name="email" />
-    </div>
-    <div>
-        <label>Password</label>
-        <input name="password" type="password"/>
-    </div>
-    <button>Submit</button>
-    </form>
-    `);
-    */
-  res.json({ error: "Not Implemented" });
+  const { id, name } = req.body;
+
+  const person = people.find((u) => {
+    return u.id === id && u.name === name;
+  });
+
+  if (person) {
+    const accessToken = JWT.sign({ id: person.id }, accessTokenSecret);
+
+    res.json({
+      accessToken,
+    });
+  } else {
+    res.json({ error: "User doesnt exist" });
+  }
 });
 
 amazingRouter.post("/login", (req: Request, res: Response) => {

@@ -21,12 +21,12 @@ const app = express();
 app.use(cookieSession({ keys: [""] }));
 
 // form encoded kullanmıyorsun
-// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json({ extended: true }));
 
 app.use(express.json());
 
 app.use(amazingRouter);
 
-app.listen(3001, () => {
-  console.log("listening on 3001");
+app.listen(3002, () => {
+  console.log("listening on 3002");
 });
