@@ -1,6 +1,7 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { People } from "./People";
-import JWT from "jsonwebtoken";
+import JWT, { JsonWebTokenError, VerifyErrors } from "jsonwebtoken";
+
 
 const amazingRouter = Router();
 const accessTokenSecret = "topsecret";
@@ -22,40 +23,55 @@ let people: People[] = [
   },
 ];
 
+const verifyToken = (req:Request,res:Response,next:NextFunction) =>   
+{
+  const  bearerHeader = req.headers['authorization'];
+
+  if (typeof bearerHeader !== 'undefined') {
+      const bearer = bearerHeader.split(' ');
+      const bearerToken = bearer[1];
+      (<any>req).token = bearerToken;
+      next();
+  }else {
+    res.sendStatus(403);
+  }
+
+}
+
 amazingRouter.get("/login", (req: Request, res: Response) => {
   // fotmencoded değil json kabul et.
   // token üret onu döndür.
   // sonra bu tokeni Authorization isminde bir header'la kabul edip kullanıcının login olup olmadığını anla
-  const { id, name } = req.body;
-
-  const person = people.find((u) => {
-    return u.id === id && u.name === name;
-  });
-
-  if (person) {
-    const accessToken = JWT.sign({ id: person.id }, accessTokenSecret);
-
-    res.json({
-      accessToken,
-    });
-  } else {
-    res.json({ error: "User doesnt exist" });
-  }
 });
+
+
+
 
 amazingRouter.post("/login", (req: Request, res: Response) => {
-  // API'ye böyle giriş yapılmaz. JWT kullan.
-  /*
-  const { email, password } = req.body;
-  if (email && password && email === "hi@hi.com" && password === "password") {
-    req.session = { loggedIn: true };
-    res.redirect("/");
-  } else {
-    res.send("invalid email or password ");
-  }
-  */
-  res.json({ error: "Not Implemented" });
+  
+    // API'ye böyle giriş yapılmaz. JWT kullan.
+  JWT.sign({ people }, "topsecret", (err :any , token) => {
+    res.json({
+      token,
+    });
+  });
 });
+
+amazingRouter.post("/login/posts",verifyToken,(req:Request,res:Response)=>{
+  
+  JWT.verify((<any>req).token,'topsecret',(err,authData)=>{
+    if(err){
+      res.sendStatus(403);
+    }else {
+      res.json({
+        
+        message:'Post created....',
+        authData
+      })
+    }
+  })
+  
+})
 
 amazingRouter.get("/", (req: Request, res: Response, next) => {
   // if (req.session && req.session.loggedIn)
